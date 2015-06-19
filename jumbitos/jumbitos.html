@@ -1,0 +1,69 @@
+<head>
+  <title>jumbitos</title>
+</head>
+
+<body>
+  <h1>Welcome to Meteor!</h1>
+  {{> loginButtons}}
+  
+  <br><br>
+  
+  {{#if notLoggedIn}}
+    Debe conectarse antes de realizar cualquier tipo de operaci&oacute;n
+  {{else}}
+    
+    {{#if isAdmin}}
+      <form class="editUsers">
+        <table>
+          <tr>
+            <th>Usuario</th>
+            <th>Jumbitos</th>
+            <th>Jugadas</th>
+            <th>Orden de llegada</th>
+            <th>Tipo</th>
+          </tr>
+          {{#each users}}
+            {{> userForm}}
+          {{/each}}  
+        </table>
+        <input type="submit" value="Submit"/>
+      </form>
+    {{else}}
+        <table>
+          <tr>
+            <th>Usuario</th>
+            <th>Jumbitos</th>
+            <th>Jugadas</th>
+            <th>Orden de llegada</th>
+            <th>Tipo</th>
+          </tr>
+        </table>
+        {{#each users}}
+          {{> userTable}}
+        {{/each}}
+    {{/if}}
+    
+  {{/if}}
+</body>
+
+<template name="userTable">
+    <tr>
+        <td>{{emails.[0].address}}</td>
+        <td>{{jumbitos}}</td>
+        <td>{{jugadas}}</td>
+        <td>{{ordenLlegada}}</td>
+        <td>{{tipo}}</td>
+    </tr>
+</template>
+
+<template name="userForm">
+    <tr>
+      <td>{{emails.[0].address}}</td>
+      <td>{{jumbitos}}</td>
+      <td><input type="number" name="jugadas" min="0" max="1" value="1" ></td>
+      <td><input type="number" name="orden" min="1"></td>
+      <td>{{tipo}}</td>
+      <td><input type="submit" value="Submit"/></td>
+    </tr>
+</template>
+
