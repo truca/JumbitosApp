@@ -1,9 +1,10 @@
 <head>
   <title>jumbitos</title>
+  
 </head>
 
 <body>
-  <h1>Welcome to Meteor!</h1>
+  <h1>Bienvenido a JumbitosApp!</h1>
   {{> loginButtons}}
   
   <br><br>
@@ -11,36 +12,47 @@
   {{#if notLoggedIn}}
     Debe conectarse antes de realizar cualquier tipo de operaci&oacute;n
   {{else}}
-    
-    {{#if isAdmin}}
-      <form class="editUsers">
-        <table>
+    {{#if notAdmin}}
+      <table class="table table-striped">
+        <tr>
+          <th>Usuario</th>
+          <th>Jumbitos</th>
+        </tr>
+        {{#each users}}
+          {{> showTable}}
+        {{/each}}
+      </table>
+    {{else}}
+      {{#if isCreating}}
+        <table class="table table-striped">
           <tr>
             <th>Usuario</th>
-            <th>Jumbitos</th>
-            <th>Jugadas</th>
+            <th>Atrasado</th>
+            <th>Ausente</th>
             <th>Orden de llegada</th>
-            <th>Tipo</th>
           </tr>
           {{#each users}}
-            {{> userForm}}
+            {{> createMatch}}
           {{/each}}  
         </table>
-        <input type="submit" value="Submit"/>
-      </form>
-    {{else}}
-        <table>
-          <tr>
-            <th>Usuario</th>
-            <th>Jumbitos</th>
-            <th>Jugadas</th>
-            <th>Orden de llegada</th>
-            <th>Tipo</th>
-          </tr>
-        </table>
-        {{#each users}}
-          {{> userTable}}
-        {{/each}}
+        <button class="buttonEnd btn btn-primary">Terminar</button>
+      {{else}}
+          <table class="table table-striped">
+            <tr>
+              <th>Usuario</th>
+              <th>Jumbitos</th>
+              <th>Juega</th>
+              <th>Atrasado</th>
+              <th>Ausente</th>
+              <th>Orden de llegada</th>
+            </tr>
+            {{#each users}}
+              {{> userTable}}
+            {{/each}}
+          </table>
+          <button class="buttonCreate btn btn-primary">Crear Partida</button>
+          <button class="buttonReset btn btn-primary">Resetear Partida</button>
+      {{/if}}
     {{/if}}
     
   {{/if}}
@@ -50,20 +62,64 @@
     <tr>
         <td>{{emails.[0].address}}</td>
         <td>{{jumbitos}}</td>
-        <td>{{jugadas}}</td>
+        {{#if puedeJugar}}
+          <td>true</td>
+        {{else}}
+          <td>false</td>
+        {{/if}}
+        {{#if atrasado}}
+          <td>true</td>
+        {{else}}
+          <td>false</td>
+        {{/if}}
+        {{#if ausente}}
+          <td>true</td>
+        {{else}}
+          <td>false</td>
+        {{/if}}
         <td>{{ordenLlegada}}</td>
-        <td>{{tipo}}</td>
     </tr>
 </template>
 
-<template name="userForm">
-    <tr>
-      <td>{{emails.[0].address}}</td>
-      <td>{{jumbitos}}</td>
-      <td><input type="number" name="jugadas" min="0" max="1" value="1" ></td>
-      <td><input type="number" name="orden" min="1"></td>
-      <td>{{tipo}}</td>
-      <td><input type="submit" value="Submit"/></td>
-    </tr>
+<template name="createMatch">
+  <tr>
+    <td class="email">{{emails.[0].address}}</td>
+    {{#if atrasado}}
+      <td><input class="atrasado" type="checkbox" name="atrasado" checked></td>
+    {{else}}
+      <td><input class="atrasado" type="checkbox" name="atrasado"></td>
+    {{/if}}
+    
+    {{#if ausente}}
+      <td><input class="ausente" type="checkbox" name="ausente" checked></td>
+    {{else}}
+      <td><input class="ausente" type="checkbox" name="ausente" ></td>
+    {{/if}}
+    {{#unless atrasado}}
+      {{#unless ausente}}
+        <td><input class="orden" type="number" min="1" name="orden" value="{{ordenLlegada}}" ></td>
+      {{else}}
+        <td><input class="orden" type="number" min="1" name="orden" value="{{ordenLlegada}}" disabled></td>
+      {{/unless}}
+    {{else}}
+      <td><input class="orden" type="number" min="1" name="orden" value="{{ordenLlegada}}" disabled></td>
+    {{/unless}}
+  </tr>
 </template>
+
+<template name="showTable">
+  <tr>
+    <td class="email">{{emails.[0].address}}</td>
+    <td>{{jumbitos}}</td>
+    {{#if currentUserCanPlay}}
+      {{#if isUserEmail emails.[0].address}}
+        <td><button class="btn btn-primary buttonEarnTwo">Ganar 2</button></td>
+      {{else}}
+        <td><button class="btn btn-primary buttonStealOne">Robar 1</button></td>
+      {{/if}}
+    {{/if}}
+  </tr>
+</template>
+
+
 
